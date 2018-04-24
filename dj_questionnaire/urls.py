@@ -17,6 +17,12 @@ from django.conf.urls import url, include
 # from django.contrib import admin
 import xadmin
 from rest_framework.documentation import include_docs_urls
+# from goods.views_base import GoodsListView
+from goods.views import GoodsListView
+#静态图， media文件
+from django.views.static import serve
+from dj_questionnaire.settings import MEDIA_ROOT
+
 
 urlpatterns = [
     url(r'^xadmin/', xadmin.site.urls),
@@ -24,4 +30,6 @@ urlpatterns = [
 
     url(r'docs/', include_docs_urls(title='b')),
     url(r'^api-auth/', include('rest_framework.urls')),
+    url(r'goods/$', GoodsListView.as_view(), name="goods-list"),
+    url(r'^media/(?P<path>.*)$', serve, {"documentroot":MEDIA_ROOT}),
 ]
