@@ -18,11 +18,22 @@ from django.conf.urls import url, include
 import xadmin
 from rest_framework.documentation import include_docs_urls
 # from goods.views_base import GoodsListView
-from goods.views import GoodsListView
+from goods.views import GoodListView3
 #静态图， media文件
 from django.views.static import serve
 from dj_questionnaire.settings import MEDIA_ROOT
 
+from goods.views import GoodsListViewSet_importent
+
+from rest_framework.routers import DefaultRouter
+# 这种最简单 需要在下面urlpatterns 用include 调用 实例router的 urls 方法完成注册
+router = DefaultRouter()
+router.register(r'goodsrouter', GoodsListViewSet_importent)  #register 配置自动将 get转到list上去
+
+goods_list = GoodsListViewSet_importent.as_view({
+    #绑定方式灵活,  但是还有跟简单的 方式配置url  用DefaultRouter
+    'get':'list',
+})
 
 urlpatterns = [
     url(r'^xadmin/', xadmin.site.urls),
@@ -30,6 +41,13 @@ urlpatterns = [
 
     url(r'docs/', include_docs_urls(title='b')),
     url(r'^api-auth/', include('rest_framework.urls')),
-    url(r'goods/$', GoodsListView.as_view(), name="goods-list"),
+
+    url(r'goods/$', GoodListView3.as_view(), name="goods-list"),
+    #用 goods_list 替换
+    url(r'goodsviewset/$', goods_list, name="goods-list"),
+
+    #router定义方式
+    url(r'^', include(router.urls)),
+
     url(r'^media/(?P<path>.*)$', serve, {"documentroot":MEDIA_ROOT}),
 ]
