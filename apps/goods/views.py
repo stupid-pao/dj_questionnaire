@@ -46,6 +46,7 @@ class GoodListView2(mixins.ListModelMixin, generics.GenericAPIView):
     queryset = Goods.objects.all()[:10]
     serializer_class = GoodsSerializer
 
+
     #get 方法要有 ListModelMixin的特点
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -66,3 +67,4 @@ class GoodsListViewSet_importent(mixins.ListModelMixin, viewsets.GenericViewSet)
     这种方式要去url 里 重写as_view方法来 设置 get。post绑定方法
     '''
     queryset = Goods.objects.all()
+    serializer_class = GoodsSerializer
