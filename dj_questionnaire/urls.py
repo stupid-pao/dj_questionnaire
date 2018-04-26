@@ -23,12 +23,13 @@ from goods.views import GoodListView3
 from django.views.static import serve
 from dj_questionnaire.settings import MEDIA_ROOT
 
-from goods.views import GoodsListViewSet_importent
+from goods.views import GoodsListViewSet_importent, GoodsListViewSet_fillter2
 
 from rest_framework.routers import DefaultRouter
 # 这种最简单 需要在下面urlpatterns 用include 调用 实例router的 urls 方法完成注册
 router = DefaultRouter()
 router.register(r'goodsrouter', GoodsListViewSet_importent)  #register 配置自动将 get转到list上去
+router.register(r'goodsfilter', GoodsListViewSet_fillter2)
 
 goods_list = GoodsListViewSet_importent.as_view({
     #绑定方式灵活,  但是还有跟简单的 方式配置url  用DefaultRouter
