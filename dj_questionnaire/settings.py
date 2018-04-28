@@ -14,6 +14,7 @@ import os
 import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BASE_DIR)
 sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
@@ -35,6 +36,7 @@ AUTH_USER_MODEL = "users.UserProfile"
 
 # Application definition
 
+
 INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'users.apps.UsersConfig',
@@ -52,9 +54,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'django_filters',
-
+    'rest_framework.authtoken',
 ]
-
 
 
 MIDDLEWARE = [
@@ -143,6 +144,11 @@ USE_L10N = True
 
 USE_TZ = True
 
+#自定义token验证
+AUTHENTICATION_BACKENDS = (
+    'users.views.CoustomBackend',
+)
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
@@ -161,4 +167,23 @@ REST_FRAMEWORK = {
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     # 'PAGE_SIZE': 100
     # 'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        #jwt的验证配置
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        #这里面的东西侧重于验证
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    )
 }
+
+import datetime
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
+
+}
+
+#验证手机验证码正则
+REGEX_MOBILE = "^1[358]\d{9}$|^147\d{8}$|^176\d{8}$"
+
+#云片网apikey
+APIKEY = ""

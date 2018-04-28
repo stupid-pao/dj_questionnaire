@@ -7,16 +7,17 @@ from .serializers import GoodsSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
-#最重要的view
+# 最重要的view
 from rest_framework import viewsets
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+from rest_framework.authentication import TokenAuthentication
 
 from .models import Goods
 from .filters import GoodsFilter
 
 
-#定制 分页
+# 定制 分页
 class GooodsPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'page_size'
@@ -48,8 +49,7 @@ class GoodListView2(mixins.ListModelMixin, generics.GenericAPIView):
     queryset = Goods.objects.all()[:10]
     serializer_class = GoodsSerializer
 
-
-    #get 方法要有 ListModelMixin的特点
+    # get 方法要有 ListModelMixin的特点
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
@@ -60,8 +60,8 @@ class GoodListView3(generics.ListAPIView):
     '''
     queryset = Goods.objects.all()
     serializer_class = GoodsSerializer
-    #加上自定义分页
-    pagination_class = GooodsPagination  #用这个 settiong 哪里page 要取消
+    # 加上自定义分页
+    pagination_class = GooodsPagination  # 用这个 settiong 哪里page 要取消
 
 
 class GoodsListViewSet_importent(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -71,7 +71,6 @@ class GoodsListViewSet_importent(mixins.ListModelMixin, viewsets.GenericViewSet)
     queryset = Goods.objects.all()
     serializer_class = GoodsSerializer
     pagination_class = GooodsPagination
-
 
 
 class GoodsListViewSet_fillter(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -86,10 +85,13 @@ class GoodsListViewSet_fillter(mixins.ListModelMixin, viewsets.GenericViewSet):
         queryset = Goods.objects.all()
         price_min = self.request.query_params.get('price_min', 0)
         if price_min:
-            queryset = queryset.filter(shop_price_gt = int(price_min))
+            queryset = queryset.filter(shop_price_gt=int(price_min))
         return queryset
 
-class GoodsListViewSet_fillter2(mixins.ListModelMixin, viewsets.GenericViewSet):
+
+class GoodsListViewSet_fillter2(mixins.ListModelMixin,
+                                mixins.RetrieveModelMixin,
+                                viewsets.GenericViewSet):
     '''
     利用 django-filter 需要进一步配置 查看drf的filter文档接口
 
@@ -98,11 +100,13 @@ class GoodsListViewSet_fillter2(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Goods.objects.all()
     serializer_class = GoodsSerializer
     pagination_class = GooodsPagination
+    authentication_classes = (TokenAuthentication, ) #自己验证Token
+
     filter_backends = (DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
     # filter_fields = ('name', 'shop_price')
     # 这种过滤是必须完全与输入匹配才能得到结果的 ，那如何模糊搜索呢？？  去django_fillter官网 看文档 => 新建一个filters。py文件
     filter_class = GoodsFilter
-    #增加搜索功能filter_baxkends 加上 rest_framework import 进来的 filters   数据量大用es搜索引擎
+    # 增加搜索功能filter_baxkends 加上 rest_framework import 进来的 filters   数据量大用es搜索引擎
     search_fields = ('name', 'goods_brief')
-    #排序
+    # 排序
     ordering_filds = ('sold_name')

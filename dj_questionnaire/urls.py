@@ -17,19 +17,29 @@ from django.conf.urls import url, include
 # from django.contrib import admin
 import xadmin
 from rest_framework.documentation import include_docs_urls
-# from goods.views_base import GoodsListView
-from goods.views import GoodListView3
+
 #静态图， media文件
 from django.views.static import serve
 from dj_questionnaire.settings import MEDIA_ROOT
-
-from goods.views import GoodsListViewSet_importent, GoodsListViewSet_fillter2
-
+from rest_framework.authtoken import views
 from rest_framework.routers import DefaultRouter
+from rest_framework_jwt.views import obtain_jwt_token
+
+# from goods.views_base import GoodsListView
+from goods.views import GoodsListViewSet_importent, GoodsListViewSet_fillter2
+from goods.views import GoodListView3
+from users.views import SmsCodeViewset, UserViewSet
+
+
+
+
 # 这种最简单 需要在下面urlpatterns 用include 调用 实例router的 urls 方法完成注册
 router = DefaultRouter()
 router.register(r'goodsrouter', GoodsListViewSet_importent)  #register 配置自动将 get转到list上去
 router.register(r'goodsfilter', GoodsListViewSet_fillter2)
+
+router.register(r'codes', SmsCodeViewset, base_name="codes")
+router.register(r'users', UserViewSet, base_name="users")
 
 goods_list = GoodsListViewSet_importent.as_view({
     #绑定方式灵活,  但是还有跟简单的 方式配置url  用DefaultRouter
@@ -51,4 +61,11 @@ urlpatterns = [
     url(r'^', include(router.urls)),
 
     url(r'^media/(?P<path>.*)$', serve, {"documentroot":MEDIA_ROOT}),
+
+    # drf 自带的token验证方式
+    url(r'^api-token-auth/', views.obtain_auth_token),
+
+    # jwt 自己的方式
+    url(r'^login/', obtain_jwt_token),
+
 ]
