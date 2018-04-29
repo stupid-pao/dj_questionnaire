@@ -100,7 +100,7 @@ class GoodsListViewSet_fillter2(mixins.ListModelMixin,
     queryset = Goods.objects.all()
     serializer_class = GoodsSerializer
     pagination_class = GooodsPagination
-    authentication_classes = (TokenAuthentication, ) #自己验证Token
+    # authentication_classes = (TokenAuthentication, ) #自己验证Token
 
     filter_backends = (DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
     # filter_fields = ('name', 'shop_price')

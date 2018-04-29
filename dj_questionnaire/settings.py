@@ -134,15 +134,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
+#时区设置
+LANGUAGE_CODE = 'zh-hans'  #中文支持，django1.8以后支持；1.8以前是zh-cn
+TIME_ZONE = 'Asia/Shanghai'
 USE_I18N = True
-
 USE_L10N = True
+USE_TZ = False   #默认是Ture，时间是utc时间，由于我们要用本地时间，所用手动修改为false！！！！
 
-USE_TZ = True
 
 #自定义token验证
 AUTHENTICATION_BACKENDS = (
@@ -168,11 +166,11 @@ REST_FRAMEWORK = {
     # 'PAGE_SIZE': 100
     # 'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        #jwt的验证配置
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         #这里面的东西侧重于验证
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        # jwt的验证配置
+        # 'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     )
 }
 

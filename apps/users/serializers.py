@@ -57,10 +57,12 @@ class UserRegSerializer(serializers.ModelSerializer):
     username = serializers.CharField(required=True, allow_blank= False,
                                      validators=[UniqueValidator(queryset=User.objects.all(), message="用户已存在")])
 
+    #serializers的style
+    password = serializers.CharField(style={'input_type': "password"}, label="密码", write_only=True)
 
     def validate_code(self, code):
         # self.initial_data  在ModelSerializer中，可以获取到前端传递的值
-        verify_records = VerifyCode.objects.filter(mobile=self.initial_data["username"]).order_by()
+        verify_records = VerifyCode.objects.filter(mobile=self.initial_data["username"]).order_by("-add_time")
         if verify_records:
             last_record = verify_records[0]
 
@@ -74,6 +76,13 @@ class UserRegSerializer(serializers.ModelSerializer):
         else:
             raise serializers.ValidationError("验证码错误")
 
+    #可以用来解决password 明文存的问题， 一般也可以用信号量
+    def create(self, validated_data):
+        user = super(UserRegSerializer, self).create(validated_data=validated_data)
+        user.set_password(validated_data["password"])
+        user.save()
+        return user
+
     # 这个验证作用于所有字段之上
     # attrs 将所有类似 validate_** 的方法返回的值 做成一个字典 => 上面的validate_code 返回的东西我们不需要，所以从attrs里删除
     def validate(self, attrs):
@@ -83,7 +92,7 @@ class UserRegSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("username", "code", "mobile")  # mobile 字段设计为可以为空，只需要用户填个用户名就好
+        fields = ("username", "code", "mobile", "password")  # mobile 字段设计为可以为空，只需要用户填个用户名就好
 
 
 

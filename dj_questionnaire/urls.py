@@ -29,6 +29,7 @@ from rest_framework_jwt.views import obtain_jwt_token
 from goods.views import GoodsListViewSet_importent, GoodsListViewSet_fillter2
 from goods.views import GoodListView3
 from users.views import SmsCodeViewset, UserViewSet
+from user_operation.views import UserFavViewSet
 
 
 
@@ -40,6 +41,7 @@ router.register(r'goodsfilter', GoodsListViewSet_fillter2)
 
 router.register(r'codes', SmsCodeViewset, base_name="codes")
 router.register(r'users', UserViewSet, base_name="users")
+router.register(r'userfavs', UserFavViewSet, base_name="userfavs")
 
 goods_list = GoodsListViewSet_importent.as_view({
     #绑定方式灵活,  但是还有跟简单的 方式配置url  用DefaultRouter
