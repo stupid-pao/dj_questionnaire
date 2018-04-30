@@ -4,8 +4,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.authentication import SessionAuthentication
 
-from .models import UserFav, UserLeavingMessage
-from .serializers import UserFavSerializer, UserFavDetailSerializer, LeavingMessageSerializer
+from .models import UserFav, UserLeavingMessage, UserAddress
+from .serializers import UserFavSerializer, UserFavDetailSerializer, LeavingMessageSerializer, AddressSerializer
 from utils import permissions
 
 
@@ -61,7 +61,16 @@ class AddressViewset(viewsets.ModelViewSet):
     收货地址管理
     ModelViewSet = 整删改查全包
     """
-    pass
+    serializer_class = LeavingMessageSerializer
+    permission_classes = (IsAuthenticated, permissions.IsOwnerOrReadOnly)
+    authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
+
+    def get_queryset(self):
+        return UserAddress.objects.filter(user = self.request.user)
+
+
+
+
 
 
 
