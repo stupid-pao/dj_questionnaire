@@ -30,7 +30,7 @@ from goods.views import GoodsListViewSet_importent, GoodsListViewSet_fillter2
 from goods.views import GoodListView3
 from users.views import SmsCodeViewset, UserViewSet
 from user_operation.views import UserFavViewSet, LeavingMessageViewSet, AddressViewset
-
+from trade.views import ShoppingCartViewSet
 
 
 
@@ -45,7 +45,9 @@ router.register(r'userfavs', UserFavViewSet, base_name="userfavs")
 #留言
 router.register(r'message', LeavingMessageViewSet, base_name="message")
 #address
-router.register(f'address', AddressViewset, base_name="address")
+router.register(r'address', AddressViewset, base_name="address")
+#购物车url
+router.register(r'shopcarts', ShoppingCartViewSet, base_name="shopcarts")
 
 goods_list = GoodsListViewSet_importent.as_view({
     #绑定方式灵活,  但是还有跟简单的 方式配置url  用DefaultRouter
