@@ -42,6 +42,15 @@ class SmsSerializer(serializers.Serializer):
         return mobile
 
 
+class UserDetailSerializer(serializers.ModelSerializer):
+    """
+    用户详情序列化
+    """
+    class Meta:
+        model = User
+        fields = ("name", "birthday", "gender", "email")
+
+
 class UserRegSerializer(serializers.ModelSerializer):
     """
     usermodel 没code 字段，要自定义Serializer => 通过一些技巧也能享受到ModelSerializer的便利

@@ -15,7 +15,7 @@ class UserFavViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.Dest
     用户收藏
     """
     queryset = UserFav.objects.all()
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, permissions.IsOwnerOrReadOnly)
     serializer_class = UserFavSerializer
     authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
     lookup_field = "goods_id"  #外键生成默认会加_id
