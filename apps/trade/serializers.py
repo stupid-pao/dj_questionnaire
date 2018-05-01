@@ -8,6 +8,7 @@ from .models import ShoppingCart
 
 
 # 继承Serializer的原因 是 购物车添加同一个商品应该加1，ModelSerializer联合主键 在creat时会报错
+# 相比于继承ModelSerializer 的弊端： creat ，update 全要自己写
 class ShopCartSerializer(serializers.Serializer):
     user = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
@@ -18,6 +19,7 @@ class ShopCartSerializer(serializers.Serializer):
                                         "required":"选择数量"
                                     })
     # 通过查文档 擦到的这个外键的写法
+    #这个拿到的是一个id
     goods = serializers.PrimaryKeyRelatedField(required=True, queryset=Goods.objects.all())  #因为是Serializer， 不是ModelSerializer 所以要指定queryset
 
 
@@ -36,4 +38,10 @@ class ShopCartSerializer(serializers.Serializer):
         else:
             existed = ShoppingCart.objects.create(**validated_data)
 
-            return existed
+        return existed
+
+    def update(self, instance, validated_data):
+        instance.nums = validated_data["nums"]
+        instance.save()
+        return instance
+
