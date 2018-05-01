@@ -5,6 +5,13 @@ from rest_framework import serializers
 
 from goods.models import Goods
 from .models import ShoppingCart
+from goods.serializers import GoodsSerializer
+
+class ShopCartDetailSerializer(serializers.ModelSerializer):
+    goods = GoodsSerializer()  #一定要写括号实例化，外键关系，不写many默认false 这里 many=False
+    class Meta:
+        model = ShoppingCart
+        fields = "__all__"
 
 
 # 继承Serializer的原因 是 购物车添加同一个商品应该加1，ModelSerializer联合主键 在creat时会报错

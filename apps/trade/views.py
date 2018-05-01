@@ -4,7 +4,7 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework import authentication
 
 from utils.permissions import IsOwnerOrReadOnly
-from .serializers import ShopCartSerializer
+from .serializers import ShopCartSerializer, ShopCartDetailSerializer
 from .models import ShoppingCart
 
 class ShoppingCartViewSet(viewsets.ModelViewSet):
@@ -21,3 +21,8 @@ class ShoppingCartViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return ShoppingCart.objects.filter(user=self.request.user)
 
+    def get_serializer_class(self):
+        if self.action == "list":
+            return ShopCartDetailSerializer
+        else:
+            return ShopCartSerializer
