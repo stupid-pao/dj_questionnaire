@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-
-
+import time
 from rest_framework import serializers
 
 from goods.models import Goods
-from .models import ShoppingCart
+from .models import ShoppingCart, OrderInfo, OrderGoods
 from goods.serializers import GoodsSerializer
 
 class ShopCartDetailSerializer(serializers.ModelSerializer):
@@ -52,3 +51,45 @@ class ShopCartSerializer(serializers.Serializer):
         instance.save()
         return instance
 
+
+class OrderGoodsSerializer(serializers.ModelSerializer):
+    # order 是model的 order的related_name 的名字
+    order = GoodsSerializer(many=False)
+    class Meta:
+        model = OrderGoods
+        fields = "__all__"
+
+
+class OrderDetailSerializer(serializers.ModelSerializer):
+
+    goods = OrderGoodsSerializer(many=True)
+    class Meta:
+        model = OrderInfo
+        fields = "__all__"
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+    pay_status = serializers.CharField(read_only=True)
+    trad_no = serializers.CharField(read_only=True)
+    order_sn = serializers.CharField(read_only=True)
+    pay_time = serializers.DateTimeField(read_only=True)
+
+    def generrate_order_sn(self):
+        from random import Random
+        rand_sn = Random()
+        order_sn = "{}{}{}".format(time.strftime("%Y%m%d%H%M%S"), self.context["request"].user.id,
+                                   rand_sn.randint(10,99))
+        return order_sn
+
+
+    def validate(self, attrs):
+        attrs["order_sn"] = self.generrate_order_sn()
+        return attrs
+
+
+    class Meta:
+        model = OrderInfo
+        fields = "__all__"
